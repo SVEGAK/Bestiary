@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Карта мифических существ Средиземноморья</title>
+
+    <!-- Leaflet CSS (обязательно до JS) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- Наши стили -->
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <!-- Заголовок поверх карты -->
+    <header class="page-header">
+        <h1>Мифические существа Средиземноморья</h1>
+        <p>Наведите на маркер и кликните, чтобы узнать подробности</p>
+    </header>
+
+    <!-- Контейнер карты (Leaflet сам найдёт его по id) -->
+    <div id="map"></div>
+
+    <!-- Легенда/подсказка внизу -->
+    <footer class="page-footer">
+        <span>Кликните на карту, чтобы узнать координаты (для отладки)</span>
+    </footer>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- ⚠️ Описания ОБЯЗАТЕЛЬНО до script.js -->
+    <script src="data/descriptions.js"></script>
+
+    <!-- ⚠️ И только ОДИН раз -->
+    <script src="script.js"></script>
+</body>
+</html>
