@@ -82,24 +82,24 @@ html, body {
    Кастомная иконка маркера
    ========================================== */
 .creature-marker {
-    font-size: 24px;
-    line-height: 24px;
+    font-size: 18px; /* Уменьшили, чтобы эмодзи не вылезал за обводку */
+    line-height: 1;
     text-align: center;
-    background: #fdf6e3;
-    border: 2px solid #8a5a2b;
     border-radius: 50%;
     width: 32px;
     height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
     cursor: pointer;
     transition: transform 0.15s ease;
-    overflow: hidden;
+    box-sizing: border-box;
+    /* Цвета фона и обводки теперь задаются в script.js через inline-style */
 }
+
 .creature-marker:hover {
     transform: scale(1.15);
+    z-index: 1000; /* Чтобы увеличенный маркер был поверх остальных */
 }
 
 .leaflet-control-attribution {
@@ -182,4 +182,269 @@ html, body {
     object-fit: contain;
     display: block;
     pointer-events: none;   /* клик идёт в div, а не в картинку */
+}
+
+/* ==========================================
+   Панель редактора (правый верхний угол)
+   ========================================== */
+.editor-panel {
+    position: fixed;
+    top: 60px;
+    right: 10px;
+    width: 280px;
+    max-height: calc(100vh - 120px);
+    background: rgba(253, 246, 227, 0.97);
+    border: 2px solid #8a5a2b;
+    border-radius: 6px;
+    padding: 10px;
+    z-index: 1001;
+    font-family: Georgia, serif;
+    font-size: 0.85rem;
+    color: #3b2a1a;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow: hidden;
+}
+
+.editor-btn {
+    padding: 6px 10px;
+    background: #8a5a2b;
+    color: #fdf6e3;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.85rem;
+    transition: background 0.15s ease;
+}
+.editor-btn:hover { background: #a06a35; }
+.editor-btn.active { background: #5a1f1f; }
+.editor-btn-small { padding: 4px 8px; font-size: 0.75rem; }
+.editor-btn-danger { background: #8b1e1e; }
+.editor-btn-danger:hover { background: #a82828; }
+
+.editor-list-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    flex: 1;
+}
+.editor-list-title {
+    font-weight: bold;
+    color: #5a1f1f;
+    border-bottom: 1px solid #c9b99a;
+    padding-bottom: 4px;
+    margin-bottom: 4px;
+}
+.editor-list {
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-height: 45vh;
+    padding-right: 4px;
+}
+.editor-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 3px;
+    user-select: none;
+}
+.editor-row:hover { background: rgba(138, 90, 43, 0.1); }
+.editor-row input[type="checkbox"] { cursor: pointer; }
+.editor-emoji { font-size: 1rem; width: 20px; text-align: center; }
+.editor-name { flex: 1; font-size: 0.8rem; line-height: 1.2; }
+
+.editor-actions {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.editor-export-area {
+    width: 100%;
+    height: 120px;
+    font-family: monospace;
+    font-size: 0.7rem;
+    resize: vertical;
+    padding: 4px;
+    border: 1px solid #c9b99a;
+    border-radius: 4px;
+}
+
+/* ==========================================
+   Ручки для редактирования ареала
+   ========================================== */
+.editor-handle {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #8b1e1e;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+    cursor: grab;
+    box-sizing: border-box;
+}
+.editor-handle:active { cursor: grabbing; }
+
+.editor-vertex {
+    background: #ffd966;
+    border-color: #c9a227;
+    border-width: 2px;
+}
+/* ==========================================
+   Панель деталей
+   ========================================== */
+.editor-details {
+    border-top: 1px solid #c9b99a;
+    padding-top: 6px;
+    margin-top: 4px;
+    max-height: 40vh;
+    overflow-y: auto;
+    font-size: 0.8rem;
+}
+.editor-details-hint {
+    color: #8a7a5a;
+    font-style: italic;
+    font-size: 0.75rem;
+    padding: 4px 0;
+}
+.editor-details-title {
+    font-weight: bold;
+    color: #5a1f1f;
+    margin-bottom: 6px;
+    font-size: 0.85rem;
+}
+
+.editor-field-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+}
+.editor-field-row label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+}
+.editor-field-row input[type="number"] {
+    width: 60px;
+    padding: 2px 4px;
+    font-size: 0.75rem;
+    border: 1px solid #c9b99a;
+    border-radius: 3px;
+    font-family: inherit;
+}
+.editor-field-row select {
+    padding: 2px 4px;
+    font-size: 0.75rem;
+    border: 1px solid #c9b99a;
+    border-radius: 3px;
+    font-family: inherit;
+    background: #fff;
+}
+
+/* Полигон — список вершин */
+.editor-points-list {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-bottom: 6px;
+    max-height: 150px;
+    overflow-y: auto;
+    padding: 4px;
+    background: rgba(201, 185, 154, 0.15);
+    border-radius: 3px;
+}
+.editor-point-row {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+}
+.editor-point-row input[type="number"] {
+    width: 55px;
+    padding: 1px 3px;
+    font-size: 0.7rem;
+    border: 1px solid #c9b99a;
+    border-radius: 2px;
+    font-family: inherit;
+}
+.editor-point-row button {
+    padding: 1px 6px;
+    font-size: 0.8rem;
+    line-height: 1;
+}
+
+/* Подсветка выбранной строки */
+.editor-row.selected {
+    background: rgba(138, 90, 43, 0.25);
+    outline: 1px solid #8a5a2b;
+}
+
+.editor-warning {
+    background: #fff3cd;
+    border: 1px solid #d4a017;
+    color: #6b4423;
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    line-height: 1.3;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.editor-warning[hidden] { display: none; }
+
+/* Заголовки групп в редакторе */
+.editor-group-title {
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #8a5a2b;
+    margin-top: 10px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid rgba(138, 90, 43, 0.3);
+    padding-bottom: 2px;
+}
+.editor-group-title:first-child {
+    margin-top: 0;
+}
+
+/* ==========================================
+   Подписи для ареалов обитания
+   ========================================== */
+.area-label-wrapper {
+    background: transparent !important;
+    border: none !important;
+}
+
+.area-label {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #8a5a2b; /* Тот же цвет, что у групп в редакторе */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    pointer-events: none; /* Клики проходят сквозь текст на сам ареал */
+    opacity: 0.85;
+
+    /* Белая обводка, чтобы текст читался на пестрой карте */
+    text-shadow:
+        -1px -1px 0 #fdf6e3,
+         1px -1px 0 #fdf6e3,
+        -1px  1px 0 #fdf6e3,
+         1px  1px 0 #fdf6e3,
+         0 0 4px #fdf6e3;
 }

@@ -26,13 +26,51 @@
         <span>Кликните на карту, чтобы узнать координаты (для отладки)</span>
     </footer>
 
+    <!-- ─── Панель редактора ─── -->
+    <div id="editor-panel" class="editor-panel">
+
+        <div id="editor-stored-warning" class="editor-warning" hidden>
+            ⚠️ Есть сохранённые правки в localStorage — они перекрывают код.
+            <button id="editor-clear-stored" class="editor-btn editor-btn-small editor-btn-danger">Сбросить и загрузить из кода</button>
+        </div>
+
+        <button id="editor-toggle" class="editor-btn">✎ Режим редактирования</button>
+
+        <div class="editor-list-wrapper">
+            <div class="editor-list-title">Сущности</div>
+            <div id="editor-list" class="editor-list"></div>
+        </div>
+
+        <div id="editor-details" class="editor-details">
+            <div class="editor-details-hint">Кликните по имени существа, чтобы открыть его параметры</div>
+        </div>
+
+        <div class="editor-actions">
+            <button id="editor-download" class="editor-btn editor-btn-small">⬇ Скачать creatures.js</button>
+            <button id="editor-copy"     class="editor-btn editor-btn-small">📋 Копировать код</button>
+            <button id="editor-reload"   class="editor-btn editor-btn-small editor-btn-danger">⟲ Перезагрузить</button>
+        </div>
+
+        <textarea id="editor-export-area" class="editor-export-area" hidden></textarea>
+    </div>
+
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <!-- ⚠️ Описания ОБЯЗАТЕЛЬНО до script.js -->
+    <!-- 1. Конфигурация: CONFIG, GEO_BOUNDS, ll, TYPE_STYLES -->
+    <script src="data/config.js"></script>
+
+    <!-- 2. Описания: DESCRIPTIONS -->
     <script src="data/descriptions.js"></script>
 
-    <!-- ⚠️ И только ОДИН раз -->
+    <!-- 3. Данные: CREATURES (использует ll и DESCRIPTIONS) -->
+    <script src="data/creatures.js"></script>
+
+    <!-- 4. Инициализация карты и рендер -->
     <script src="script.js"></script>
+
+    <!-- 5. Редактор (использует window.MythMap) -->
+    <script src="editor.js"></script>
+
 </body>
 </html>

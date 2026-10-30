@@ -1,551 +1,4 @@
 // ==========================================================
-// КОНФИГУРАЦИЯ КАРТЫ (пиксельный режим, CRS.Simple)
-// ==========================================================
-const CONFIG = {
-    center: [348, 632],
-    zoom: 0,
-    minZoom: 0,
-    maxZoom: 3,
-    imageUrl: 'assets/map.svg',
-    imageBounds: [[0, 0], [696, 1264]],
-    imageOpacity: 0.95,
-    debugCoords: true,
-};
-
-// ==========================================================
-// ГЕОГРАФИЧЕСКИЕ ГРАНИЦЫ SVG (для ll())
-// ==========================================================
-const GEO_BOUNDS = {
-    minLat: 30,  maxLat: 48,
-    minLng: -10, maxLng: 40,
-};
-
-// ==========================================================
-// ЦВЕТОВЫЕ СТИЛИ АРЕАЛОВ ПО ТИПАМ
-// ==========================================================
-const TYPE_STYLES = {
-    constellation: {
-        color: '#c9a227',
-        fillColor: '#ffd966',
-        fillOpacity: 0.28,
-        weight: 2,
-        dashArray: '8 5',
-    },
-    minor: {
-        color: '#5b8c3e',
-        fillColor: '#a8c96e',
-        fillOpacity: 0.22,
-        weight: 1.5,
-        dashArray: '4 4',
-    },
-    dragon: {
-        color: '#8b1e1e',
-        fillColor: '#d44a4a',
-        fillOpacity: 0.25,
-        weight: 2,
-        dashArray: null,
-    },
-    beast: {
-        color: '#6b4423',
-        fillColor: '#b07c4f',
-        fillOpacity: 0.25,
-        weight: 2,
-        dashArray: null,
-    },
-};
-
-// ==========================================================
-// ХЕЛПЕР: lat/lng → пиксели
-// ==========================================================
-function ll(lat, lng) {
-    const y = (lat - GEO_BOUNDS.minLat)
-        / (GEO_BOUNDS.maxLat - GEO_BOUNDS.minLat)
-        * CONFIG.imageBounds[1][0];
-    const x = (lng - GEO_BOUNDS.minLng)
-        / (GEO_BOUNDS.maxLng - GEO_BOUNDS.minLng)
-        * CONFIG.imageBounds[1][1];
-    return [y, x];
-}
-
-// ==========================================================
-// ДАННЫЕ О СУЩЕСТВАХ
-// ==========================================================
-const CREATURES = [
-
-    // ─── СОЗВЕЗДИЯ ЖИВОТНЫХ ───
-    {
-        id: 'kriy',
-        name: 'Овен / Златорунный баран — Крий',
-        coords: [381.1, 557.4],
-        emoji: '🐏',
-        type: 'constellation',
-        habitat: { type: 'circle', radius: 18 },
-        desc: DESCRIPTIONS['kriy'],
-    },
-    {
-        id: 'karkin',
-        name: 'Рак / Краб — Каркин',
-        coords: [341.9, 542.8],
-        emoji: '🦀',
-        type: 'constellation',
-        desc: DESCRIPTIONS['karkin'],
-    },
-    {
-        id: 'skorpios',
-        name: 'Скорпион — Скорпиос',
-        coords: [250.6, 611.7],
-        emoji: '🦂',
-        type: 'constellation',
-        desc: DESCRIPTIONS['skorpios'],
-    },
-    {
-        id: 'ichthys',
-        name: 'Рыбы — Ихтис',
-        coords: [212.8, 949.7],
-        emoji: '🐟',
-        type: 'constellation',
-        habitat: {
-            type: 'polygon',
-            points: [
-                [263.9, 923.1],
-                [302.6, 944.5],
-                [315.8, 962.6],
-                [305.6, 966.6],
-                [292.5, 958.5],
-                [ 273.0, 961.8],
-                [220.0, 971.8],
-                [197.8, 934.5],
-                [218.5, 878.6],
-                [236.5, 908.6],
-],
-                },
-        desc: DESCRIPTIONS['ichthys'],
-    },
-    {
-        id: 'chiron',
-        name: 'Стрелец / Центавр — Хирон',
-        coords: [418.9, 548.8],
-        emoji: '🏹',
-        type: 'constellation',
-        desc: DESCRIPTIONS['chiron'],
-    },
-
-
-    // ─── ВТОРОСТЕПЕННЫЕ СОЗВЕЗДИЯ ───
-    {
-        id: 'eagle-zeus',
-        name: 'Орёл Зевса',
-        coords: [446.5, 521.8],
-        emoji: '🦅',
-        type: 'minor',
-        desc: DESCRIPTIONS['eagle-zeus'],
-    },
-    {
-        id: 'laelaps',
-        name: 'Большой пёс — Лелап',
-        coords: [241.4, 619.9],
-        emoji: '🐕',
-        type: 'minor',
-             habitat: {
-                         type: 'polygon',
-                         points: [
-                             [259.1, 577.1],
-                             [260.0, 581.3],
-                             [ 264.4, 582.0],
-                             [263.5, 583.4],
-                             [259.9, 585.4],
-                             [259.9, 592.0],
-                             [262.4, 594.5],
-                             [260.4, 596.9],
-                             [258.3, 594.8],
-                              [256.9, 598.6],
-                              [253.5, 599.9],
-                              [256.4, 613.0],
-                              [254.9, 617.3],
-                            [255.3, 622.0],
-                              [253.6, 623.9],
-                              [251.8, 633.1],
-                              [249.9, 638.0],
-                              [252.0, 645.4],
-                              [250.9, 647.0],
-                            [243.8, 647.0],
-                            [242.6, 649.6],
-                            [245.5, 652.0],
-                            [246.9, 655.8],
-                            [246.5, 660.3],
-                            [250.3, 663.0],
-                            [248.5, 663.8],
-                            [239.9, 663.6],
-                            [237.6, 659.5],
-                            [237.5, 643.9],
-                            [234.4, 620.5],
-                            [234.9, 615.4],
-                            [240.9, 613.5],
-                            [246.8, 588.5],
-                            [246.8, 579.9],
-                            [252.6, 576.6],
-             ],
-                             },
-        desc: DESCRIPTIONS['laelaps'],
-    },
-    {
-        id: 'teumessian-fox',
-        name: 'Малый пёс — Тевмесская лисица',
-        coords: [376.5, 561.3],
-        emoji: '🦊',
-        type: 'minor',
-        desc: DESCRIPTIONS['teumessian-fox'],
-    },
-    {
-        id: 'pholus',
-        name: 'Кентавр и Чаша — Фолос',
-        coords: [352.8, 510.9],
-        emoji: '🏺',
-        type: 'minor',
-        desc: DESCRIPTIONS['pholus'],
-    },
-{
-     id: 'ket-troy',
-     name: 'Кит — Кет',
-     coords: [438.9, 638.5],
-     emoji: '🐋',
-     type: 'minor',
-     habitat: {
-                 type: 'polygon',
-                 points: [
-                     [421.3, 642.4],
-                     [ 441.8, 642.8],
-                     [448.0, 636.0],
-                     [446.0, 625.4],
-                     [441.1, 620.9],
-                     [435.6, 618.6],
-                     [428.5, 618.1],
-                     [423.6, 617.9],
-                     [420.1, 623.5],
-     ],
-                     },
-     desc: DESCRIPTIONS['ket-troy'],
- },
-    {
-        id: 'pegasus',
-        name: 'Пегас',
-        coords: [445.5, 520.5],
-        emoji: '🐴',
-        type: 'minor',
-        desc: DESCRIPTIONS['pegasus'],
-    },
-    {
-        id: 'hare',
-        name: 'Заяц',
-        coords: [319.3, 678.6],
-        emoji: '🐇',
-        type: 'minor',
-        desc: DESCRIPTIONS['hare'],
-    },
-    {
-        id: 'amalthea',
-        name: 'Козлята — Коза Амалфея',
-        coords: [245.0, 637.9],
-        emoji: '🌟',
-        type: 'minor',
-        desc: DESCRIPTIONS['amalthea'],
-    },
-
-    // ─── ЗМЕИ И ДРАКОНЫ ───
-    {
-        id: 'chimera',
-        name: 'Химера Ликийская',
-        coords: [305.8, 748.0],
-        emoji: '🦁',
-        type: 'dragon',
-        desc: DESCRIPTIONS['chimera'],
-    },
-    {
-        id: 'colchian-dragon',
-        name: 'Колхидский дракон — Колхис',
-        coords: [537.5, 1110.1],
-        emoji: '🐉',
-        type: 'dragon',
-        desc: DESCRIPTIONS['colchian-dragon'],
-    },
-    {
-        id: 'ismenian-dragon',
-        name: 'Исменийский дракон',
-        coords: [378.1, 559.4],
-        emoji: '🐲',
-        type: 'dragon',
-        desc: DESCRIPTIONS['ismenian-dragon'],
-    },
-    {
-        id: 'python',
-        name: 'Пифон',
-        coords: [381.8, 527.6],
-        emoji: '🐍',
-        type: 'dragon',
-        desc: DESCRIPTIONS['python'],
-    },
-    {
-        id: 'cychreus',
-        name: 'Кихрид',
-        coords: [359.0, 567.3],
-        emoji: '🐍',
-        type: 'dragon',
-        desc: DESCRIPTIONS['cychreus'],
-    },
-    {
-        id: 'maeonian-dragon',
-        name: 'Меонийский дракон',
-        coords: [390.1, 754.8],
-        emoji: '🐲',
-        type: 'dragon',
-        habitat: { type: 'circle', radius: 55 },
-        desc: DESCRIPTIONS['maeonian-dragon'],
-    },
-    {
-        id: 'nemean-dragon',
-        name: 'Немейский дракон',
-        coords: [355.8, 545.5],
-        emoji: '🐲',
-        type: 'dragon',
-        habitat: { type: 'circle', radius: 5 },
-        desc: DESCRIPTIONS['nemean-dragon'],
-    },
-    {
-        id: 'ophiogenes',
-        name: 'Офиоген',
-        coords: [457.8, 670.0],
-        emoji: '🐍',
-        type: 'dragon',
-        desc: DESCRIPTIONS['ophiogenes'],
-    },
-    {
-        id: 'pitane-dragon',
-        name: 'Дракон Питаны',
-        coords: [380.0, 787.5],
-        emoji: '🐍',
-        type: 'dragon',
-        habitat: { type: 'circle', radius: 20 },
-        desc: DESCRIPTIONS['pitane-dragon'],
-    },
-    {
-        id: 'rhodes-dragons',
-        name: 'Драконы Родоса',
-        coords: [288.9, 713.1],
-        emoji: '🐉',
-        type: 'dragon',
-        desc: DESCRIPTIONS['rhodes-dragons'],
-    },
-    {
-        id: 'thespian-dragon',
-        name: 'Феспийский дракон',
-        coords: [381.5, 544.9],
-        emoji: '🐲',
-        type: 'dragon',
-        desc: DESCRIPTIONS['thespian-dragon'],
-    },
-        // ─── ЗВЕРИ И ЧУДОВИЩА ───
-        {
-            id: 'nemean-lion',
-            name: 'Немейский лев',
-            coords: [351.9, 541.3],
-            emoji: '🦁',
-            type: 'beast',
-            habitat: { type: 'circle', radius: 15 },
-            desc: DESCRIPTIONS['nemean-lion'],
-        },
-        {
-            id: 'lernean-hydra',
-            name: 'Лернейская гидра',
-            coords: [338.9, 543.1],
-            emoji: '🐍',
-            type: 'beast',
-            desc: DESCRIPTIONS['lernean-hydra'],
-        },
-        {
-            id: 'ceryneian-hind',
-            name: 'Керинейская лань',
-            coords: [352.8, 524.4],
-            emoji: '🦌',
-            type: 'beast',
-             habitat: {
-                         type: 'polygon',
-                         points: [
-                             [367.0, 501.4],
-                             [368.4, 509.5],
-                             [373.0, 512.3],
-                             [373.4, 519.4],
-                             [369.6, 523.6],
-                             [366.5, 535.3],
-                             [357.1, 526.4],
-                             [343.6, 528.4],
-                             [333.6, 514.3],
-                             [347.0, 505.1],
-                             [356.1, 496.6],
-             ],
-                             },
-            desc: DESCRIPTIONS['ceryneian-hind'],
-        },
-        {
-            id: 'erymanthian-boar',
-            name: 'Эриманфский вепрь',
-            coords: [361.6, 516.9],
-            emoji: '🐗',
-            type: 'beast',
-            desc: DESCRIPTIONS['erymanthian-boar'],
-        },
-        {
-            id: 'stymphalian-birds',
-            name: 'Стимфалийские птицы',
-            coords: [357.0, 539.3],
-            emoji: '🦅',
-            type: 'beast',
-            desc: DESCRIPTIONS['stymphalian-birds'],
-        },
-        {
-            id: 'cretan-bull',
-            name: 'Критский бык',
-            coords: [245.9, 629.1],
-            emoji: '🐂',
-            type: 'beast',
-            desc: DESCRIPTIONS['cretan-bull'],
-        },
-        {
-            id: 'mares-of-diomedes',
-            name: 'Кони Диомеда',
-            coords: [526.3, 685.0],
-            emoji: '🐎',
-            type: 'beast',
-                         habitat: {
-                                     type: 'polygon',
-                                     points: [
-                                         [530.4, 684.6],
-                                         [522.3, 690.5],
-                                         [517.3, 689.9],
-                                         [513.9, 691.5],
-                                         [504.8, 698.0],
-                                         [502.4, 697.8],
-                                         [502.8, 690.9],
-                                         [509.4, 683.4],
-                                         [511.9, 677.9],
-                                         [520.8, 677.0],
-                                         [527.1, 679.8],
-                         ],
-                                         },
-            desc: DESCRIPTIONS['mares-of-diomedes'],
-        },
-        {
-            id: 'caucasian-eagle',
-            name: 'Кавказский орёл (Этон)',
-            coords: [551.2, 1143.7],
-            emoji: '🦅',
-            type: 'beast',
-                        type: 'beast',
-                                     habitat: {
-                                                 type: 'polygon',
-                                                 points: [
-                                                     [582.1, 1039.3],
-                                                     [585.7, 1036.6],
-                                                     [603.0, 1058.0],
-                                                     [595.3, 1090.3],
-                                                     [587.5, 1119.5],
-                                                     [579.8, 1143.5],
-                                                     [579.8, 1143.5],
-                                                     [576.0, 1164.8],
-                                                     [569.5, 1172.5],
-                                                     [551.5, 1168.3],
-                                                     [541.3, 1162.5],
-                                                     [539.8, 1147.0],
-                                                     [554.5, 1085.3],
-                                                     [571.0, 1056.0],
-                                     ],
-                                                     },
-            desc: DESCRIPTIONS['caucasian-eagle'],
-        },
-        {
-            id: 'arcadian-centaurs',
-            name: 'Аркадийские кентавры',
-            coords: ll(37.7, 22.0),
-            emoji: '🐴',
-            type: 'beast',
-            habitat: { type: 'circle', radius: 30 },
-            desc: DESCRIPTIONS['arcadian-centaurs'],
-        },
-
-        {
-            id: 'orthrus',
-            name: 'Орф (Ортр)',
-            coords: ll(36.5, -6.3),
-            emoji: '🐕',
-            type: 'beast',
-            habitat: { type: 'circle', radius: 20 },
-            desc: DESCRIPTIONS['orthrus'],
-        },
-        {
-            id: 'sybaris',
-            name: 'Сибарис / Сибарида',
-            coords: ll(38.5, 22.5),
-            emoji: '🐾',
-            type: 'beast',
-            habitat: { type: 'circle', radius: 15 },
-            desc: DESCRIPTIONS['sybaris'],
-        },
-        {
-            id: 'minotaur',
-            name: 'Минотавр',
-            coords: ll(35.3, 25.1),
-            emoji: '🐂',
-            type: 'beast',
-            habitat: { type: 'circle', radius: 25 },
-            desc: DESCRIPTIONS['minotaur'],
-        },
-
-        // ─── ЗМЕИ И ДРАКОНЫ (новые) ───
-        {
-            id: 'scythian-dracaena',
-            name: 'Дракайна Скифии',
-            coords: ll(46.0, 32.0),
-            emoji: '🐍',
-            type: 'dragon',
-            desc: DESCRIPTIONS['scythian-dracaena'],
-        },
-        {
-            id: 'hesperian-dragon',
-            name: 'Гесперийский дракон (Ладон)',
-            coords: ll(32.0, -6.0),
-            emoji: '🐉',
-            type: 'dragon',
-            habitat: { type: 'circle', radius: 30 },
-            desc: DESCRIPTIONS['hesperian-dragon'],
-        },
-        {
-            id: 'trojan-dragons',
-            name: 'Троянские драконы',
-            coords: ll(39.9, 26.2),
-            emoji: '🐍',
-            type: 'dragon',
-            habitat: { type: 'circle', radius: 20 },
-            desc: DESCRIPTIONS['trojan-dragons'],
-        },
-        {
-            id: 'phrygian-dragon',
-            name: 'Фригийский дракон',
-            coords: ll(39.0, 31.0),
-            emoji: '🐲',
-            type: 'dragon',
-            habitat: { type: 'circle', radius: 40 },
-            desc: DESCRIPTIONS['phrygian-dragon'],
-        },
-        {
-            id: 'argive-echidna',
-            name: 'Аргосская Ехидна',
-            coords: ll(37.6, 22.7),
-            emoji: '🐍',
-            type: 'dragon',
-            habitat: { type: 'circle', radius: 25 },
-            desc: DESCRIPTIONS['argive-echidna'],
-        },
-];
-// ==========================================================
 // ИНИЦИАЛИЗАЦИЯ КАРТЫ
 // ==========================================================
 const map = L.map('map', {
@@ -600,17 +53,43 @@ window.addEventListener('orientationchange', () =>
 const zonesLayer   = L.layerGroup().addTo(map);
 const markersLayer = L.layerGroup().addTo(map);
 
-CREATURES.forEach((creature) => {
-    const popupHtml = `
-        <h3 class="popup-title">${creature.emoji} ${creature.name}</h3>
-        <p class="popup-desc">${creature.desc}</p>
-    `;
+// ==========================================================
+// ФУНКЦИЯ СОЗДАНИЯ ПОДПИСИ ДЛЯ АРЕАЛА
+// ==========================================================
+function createAreaLabel(creature) {
+    let pos = creature.coords;
+    if (creature.habitat && creature.habitat.type === 'polygon') {
+        const points = creature.habitat.points;
+        const lat = points.reduce((s, p) => s + p[0], 0) / points.length;
+        const lng = points.reduce((s, p) => s + p[1], 0) / points.length;
+        pos = [lat, lng];
+    }
 
-    // ── 1. Ареал обитания ──
+    // Обрезаем длинные названия (оставляем только текст до тире)
+    const shortName = creature.name.split('—')[0].trim();
+
+    const icon = L.divIcon({
+        className: 'area-label-wrapper',
+        html: `<div class="area-label">${shortName}</div>`,
+    });
+
+    // interactive: false — чтобы текст не перехватывал клики
+    return L.marker(pos, { icon, interactive: false, zIndexOffset: -100 });
+}
+
+// ==========================================================
+// РЕЕСТР СУЩНОСТЕЙ ДЛЯ РЕДАКТОРА (объявляется ОДИН раз)
+// ==========================================================
+const creatureRefs = new Map();
+
+CREATURES.forEach((creature) => {
+    // ── 1. Ареал и подпись ──
+    let zone = null;
+    let label = null;
+
     if (creature.habitat) {
         const style = TYPE_STYLES[creature.type] || TYPE_STYLES.constellation;
 
-        let zone = null;
         if (creature.habitat.type === 'circle') {
             zone = L.circle(creature.coords, {
                 ...style,
@@ -621,23 +100,76 @@ CREATURES.forEach((creature) => {
         }
 
         if (zone) {
-            zone.bindPopup(popupHtml).addTo(zonesLayer);
+            // Объявляем popupHtml прямо здесь, чтобы не было ReferenceError
+            const popupHtml = `
+                <h3 class="popup-title">${creature.emoji} ${creature.name}</h3>
+                <p class="popup-desc">${creature.desc}</p>
+            `;
+            zone.bindPopup(popupHtml);
         }
+
+        // Создаем подпись
+        label = createAreaLabel(creature);
     }
 
-    // ── 2. Маркер (эмодзи) ──
+    // ── 2. Маркер (с цветом ареала) ──
+    const style = TYPE_STYLES[creature.type] || TYPE_STYLES.constellation;
+    const bgColor = style.fillColor;
+    const outlineColor = style.color;
+
     const icon = L.divIcon({
         className: '',
-        html: `<div class="creature-marker" title="${creature.name}">${creature.emoji}</div>`,
+        html: `<div class="creature-marker"
+                    style="background-color: ${bgColor}; border: 2px solid #fff; box-shadow: 0 0 0 2px ${outlineColor}, 0 3px 6px rgba(0,0,0,0.4);"
+                    title="${creature.name}">
+                    ${creature.emoji}
+               </div>`,
         iconSize: [32, 32],
         iconAnchor: [16, 16],
         popupAnchor: [0, -18],
     });
 
-    L.marker(creature.coords, { icon })
-        .bindPopup(popupHtml)
-        .addTo(markersLayer);
+    // Отдельный popupHtml для маркера (на случай, если у зоны его нет)
+    const markerPopupHtml = `
+        <h3 class="popup-title">${creature.emoji} ${creature.name}</h3>
+        <p class="popup-desc">${creature.desc}</p>
+    `;
+
+    const marker = L.marker(creature.coords, { icon })
+        .bindPopup(markerPopupHtml);
+
+    // ── 3. Применяем состояние «включено» ──
+    const isEnabled = creature.enabled !== false;
+    if (isEnabled) {
+        marker.addTo(markersLayer);
+        if (zone) zone.addTo(zonesLayer);
+        if (label) label.addTo(zonesLayer);
+    }
+
+    // Сохраняем ссылки в реестр
+    creatureRefs.set(creature.id, {
+        creature,
+        marker,
+        zone,
+        label,
+        handles: [],
+        _radiusHandle: null,
+    });
 });
+
+// ==========================================================
+// ГЛОБАЛЬНЫЙ ОБЪЕКТ ДЛЯ editor.js
+// ==========================================================
+window.MythMap = {
+    map,
+    CREATURES,
+    zonesLayer,
+    markersLayer,
+    creatureRefs,
+    TYPE_STYLES,
+    CONFIG,
+    createAreaLabel,
+};
 
 // ==========================================================
 // ПЕРЕКЛЮЧАТЕЛЬ СЛОЁВ
