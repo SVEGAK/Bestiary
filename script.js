@@ -82,7 +82,16 @@ function createAreaLabel(creature) {
 // ==========================================================
 const creatureRefs = new Map();
 
+// Уровень зума при клике (чуть меньше максимального, чтобы был виден контекст)
+const ZOOM_ON_CLICK = CONFIG.maxZoom - 0.50;
+
 CREATURES.forEach((creature) => {
+    // Объявляем popupHtml один раз здесь
+    const popupHtml = `
+        <h3 class="popup-title">${creature.emoji} ${creature.name}</h3>
+        <p class="popup-desc">${creature.desc}</p>
+    `;
+
     // ── 1. Ареал и подпись ──
     let zone = null;
     let label = null;
@@ -90,37 +99,42 @@ CREATURES.forEach((creature) => {
     if (creature.habitat) {
         const style = TYPE_STYLES[creature.type] || TYPE_STYLES.constellation;
 
+        // Добавляем bubblingMouseEvents: false, чтобы клик по ареалу
+        // не вызывал клик по карте (и не срабатывала отладка)
+        const pathOptions = { ...style, bubblingMouseEvents: false };
+
         if (creature.habitat.type === 'circle') {
             zone = L.circle(creature.coords, {
-                ...style,
+                ...pathOptions,
                 radius: creature.habitat.radius,
             });
         } else if (creature.habitat.type === 'polygon') {
-            zone = L.polygon(creature.habitat.points, style);
+            zone = L.polygon(creature.habitat.points, pathOptions);
         }
 
         if (zone) {
-            // Объявляем popupHtml прямо здесь, чтобы не было ReferenceError
-            const popupHtml = `
-                <h3 class="popup-title">${creature.emoji} ${creature.name}</h3>
-                <p class="popup-desc">${creature.desc}</p>
-            `;
-            zone.bindPopup(popupHtml);
+            zone.bindPopup(popupHtml, { autoPan: false });
+
+            // Зум при клике на ареал
+            zone.on('click', (e) => {
+                // e.latlng — это точка, куда кликнул пользователь
+                map.flyTo(e.latlng, ZOOM_ON_CLICK, { duration: 1 });
+            });
         }
 
-        // Создаем подпись
         label = createAreaLabel(creature);
     }
 
-    // ── 2. Маркер (с цветом ареала) ──
+    // ── 2. Маркер ──
     const style = TYPE_STYLES[creature.type] || TYPE_STYLES.constellation;
     const bgColor = style.fillColor;
     const outlineColor = style.color;
 
     const icon = L.divIcon({
         className: '',
+        // Упрощенный box-shadow (без размытия на 6px), это сильно ускорит рендер
         html: `<div class="creature-marker"
-                    style="background-color: ${bgColor}; border: 2px solid #fff; box-shadow: 0 0 0 2px ${outlineColor}, 0 3px 6px rgba(0,0,0,0.4);"
+                    style="background-color: ${bgColor}; border: 2px solid #fff; box-shadow: 0 0 0 2px ${outlineColor}, 0 2px 4px rgba(0,0,0,0.3);"
                     title="${creature.name}">
                     ${creature.emoji}
                </div>`,
@@ -129,14 +143,15 @@ CREATURES.forEach((creature) => {
         popupAnchor: [0, -18],
     });
 
-    // Отдельный popupHtml для маркера (на случай, если у зоны его нет)
-    const markerPopupHtml = `
-        <h3 class="popup-title">${creature.emoji} ${creature.name}</h3>
-        <p class="popup-desc">${creature.desc}</p>
-    `;
+    const marker = L.marker(creature.coords, {
+        icon,
+        bubblingMouseEvents: false // Отключаем всплытие клика
+    }).bindPopup(popupHtml, { autoPan: false});
 
-    const marker = L.marker(creature.coords, { icon })
-        .bindPopup(markerPopupHtml);
+    // Зум при клике на маркер
+    marker.on('click', (e) => {
+        map.flyTo(e.latlng, ZOOM_ON_CLICK, { duration: 0.8 });
+    });
 
     // ── 3. Применяем состояние «включено» ──
     const isEnabled = creature.enabled !== false;
@@ -146,7 +161,6 @@ CREATURES.forEach((creature) => {
         if (label) label.addTo(zonesLayer);
     }
 
-    // Сохраняем ссылки в реестр
     creatureRefs.set(creature.id, {
         creature,
         marker,

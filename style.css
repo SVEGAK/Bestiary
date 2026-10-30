@@ -7,21 +7,27 @@ html, body {
     background: #3b2a1a;
 }
 
-/* Шапка */
-.page-header {
-    padding: 16px 24px;
-    text-align: center;
-    background: #3b2a1a;
+/* Шапка и подвал */
+.page-header, .page-footer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    background: rgba(59, 42, 26, 0.85);
     color: #f4ecd8;
+    text-align: center;
 }
+.page-header { top: 0; padding: 10px 24px; }
+.page-footer { bottom: 0; padding: 6px 24px; font-size: 0.75rem; }
+
 .page-header h1 {
-    margin: 0 0 4px;
-    font-size: 1.4rem;
+    margin: 0 0 2px;
+    font-size: 1.2rem;
     letter-spacing: 1px;
 }
 .page-header p {
     margin: 0;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     opacity: 0.8;
 }
 
@@ -34,23 +40,6 @@ html, body {
     background: #d9cfb8;
     z-index: 1;
 }
-
-/* Заголовок и подвал поверх карты */
-.page-header,
-.page-footer {
-    position: fixed;
-    left: 0;
-    right: 0;
-    z-index: 999;
-    background: rgba(59, 42, 26, 0.85);
-    color: #f4ecd8;
-    text-align: center;
-}
-.page-header { top: 0;    padding: 10px 24px; }
-.page-footer { bottom: 0; padding: 6px 24px; font-size: 0.75rem; }
-
-.page-header h1 { margin: 0 0 2px; font-size: 1.2rem; }
-.page-header p  { margin: 0; font-size: 0.8rem; opacity: 0.8; }
 
 /* ==========================================
    Попапы
@@ -82,7 +71,7 @@ html, body {
    Кастомная иконка маркера
    ========================================== */
 .creature-marker {
-    font-size: 18px; /* Уменьшили, чтобы эмодзи не вылезал за обводку */
+    font-size: 18px;
     line-height: 1;
     text-align: center;
     border-radius: 50%;
@@ -92,14 +81,15 @@ html, body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    /* Оптимизация для браузера: выносит отрисовку на GPU */
+    will-change: transform;
     transition: transform 0.15s ease;
     box-sizing: border-box;
-    /* Цвета фона и обводки теперь задаются в script.js через inline-style */
 }
 
 .creature-marker:hover {
     transform: scale(1.15);
-    z-index: 1000; /* Чтобы увеличенный маркер был поверх остальных */
+    z-index: 1000;
 }
 
 .leaflet-control-attribution {
@@ -107,7 +97,7 @@ html, body {
 }
 
 /* ==========================================
-   Легенда типов существ (левый нижний угол)
+   Легенда (левый нижний угол)
    ========================================== */
 .map-legend {
     position: fixed;
@@ -143,21 +133,10 @@ html, body {
     border-radius: 2px;
     border: 1.5px solid;
 }
-.legend-constellation {
-    background: rgba(255, 217, 102, 0.4);
-    border-color: #c9a227;
-    border-style: dashed;
-}
-.legend-minor {
-    background: rgba(168, 201, 110, 0.4);
-    border-color: #5b8c3e;
-    border-style: dashed;
-}
-.legend-dragon {
-    background: rgba(212, 74, 74, 0.4);
-    border-color: #8b1e1e;
-    border-style: solid;
-}
+.legend-constellation { background: rgba(255, 217, 102, 0.4); border-color: #c9a227; border-style: dashed; }
+.legend-minor { background: rgba(168, 201, 110, 0.4); border-color: #5b8c3e; border-style: dashed; }
+.legend-dragon { background: rgba(212, 74, 74, 0.4); border-color: #8b1e1e; border-style: solid; }
+.legend-beast { background: rgba(176, 124, 79, 0.4); border-color: #6b4423; border-style: solid; }
 
 /* ==========================================
    Панель слоёв (правый нижний угол)
@@ -174,14 +153,6 @@ html, body {
 .leaflet-control-layers label {
     font-size: 0.85rem;
     color: #3b2a1a;
-}
-
-.marker-img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
-    pointer-events: none;   /* клик идёт в div, а не в картинку */
 }
 
 /* ==========================================
@@ -277,9 +248,7 @@ html, body {
     border-radius: 4px;
 }
 
-/* ==========================================
-   Ручки для редактирования ареала
-   ========================================== */
+/* Ручки для редактирования ареала */
 .editor-handle {
     width: 100%;
     height: 100%;
@@ -291,15 +260,9 @@ html, body {
     box-sizing: border-box;
 }
 .editor-handle:active { cursor: grabbing; }
+.editor-vertex { background: #ffd966; border-color: #c9a227; border-width: 2px; }
 
-.editor-vertex {
-    background: #ffd966;
-    border-color: #c9a227;
-    border-width: 2px;
-}
-/* ==========================================
-   Панель деталей
-   ========================================== */
+/* Панель деталей */
 .editor-details {
     border-top: 1px solid #c9b99a;
     padding-top: 6px;
@@ -320,7 +283,6 @@ html, body {
     margin-bottom: 6px;
     font-size: 0.85rem;
 }
-
 .editor-field-row {
     display: flex;
     align-items: center;
@@ -328,20 +290,8 @@ html, body {
     margin-bottom: 6px;
     flex-wrap: wrap;
 }
-.editor-field-row label {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 0.75rem;
-}
-.editor-field-row input[type="number"] {
-    width: 60px;
-    padding: 2px 4px;
-    font-size: 0.75rem;
-    border: 1px solid #c9b99a;
-    border-radius: 3px;
-    font-family: inherit;
-}
+.editor-field-row label { display: flex; align-items: center; gap: 4px; font-size: 0.75rem; }
+.editor-field-row input[type="number"],
 .editor-field-row select {
     padding: 2px 4px;
     font-size: 0.75rem;
@@ -350,6 +300,7 @@ html, body {
     font-family: inherit;
     background: #fff;
 }
+.editor-field-row input[type="number"] { width: 60px; }
 
 /* Полигон — список вершин */
 .editor-points-list {
@@ -363,11 +314,7 @@ html, body {
     background: rgba(201, 185, 154, 0.15);
     border-radius: 3px;
 }
-.editor-point-row {
-    display: flex;
-    gap: 3px;
-    align-items: center;
-}
+.editor-point-row { display: flex; gap: 3px; align-items: center; }
 .editor-point-row input[type="number"] {
     width: 55px;
     padding: 1px 3px;
@@ -376,32 +323,13 @@ html, body {
     border-radius: 2px;
     font-family: inherit;
 }
-.editor-point-row button {
-    padding: 1px 6px;
-    font-size: 0.8rem;
-    line-height: 1;
-}
+.editor-point-row button { padding: 1px 6px; font-size: 0.8rem; line-height: 1; }
 
 /* Подсветка выбранной строки */
 .editor-row.selected {
     background: rgba(138, 90, 43, 0.25);
     outline: 1px solid #8a5a2b;
 }
-
-.editor-warning {
-    background: #fff3cd;
-    border: 1px solid #d4a017;
-    color: #6b4423;
-    padding: 6px 8px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    line-height: 1.3;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.editor-warning[hidden] { display: none; }
 
 /* Заголовки групп в редакторе */
 .editor-group-title {
@@ -415,9 +343,7 @@ html, body {
     border-bottom: 1px solid rgba(138, 90, 43, 0.3);
     padding-bottom: 2px;
 }
-.editor-group-title:first-child {
-    margin-top: 0;
-}
+.editor-group-title:first-child { margin-top: 0; }
 
 /* ==========================================
    Подписи для ареалов обитания
@@ -426,21 +352,18 @@ html, body {
     background: transparent !important;
     border: none !important;
 }
-
 .area-label {
     position: absolute;
     transform: translate(-50%, -50%);
     font-family: Georgia, "Times New Roman", serif;
     font-size: 0.75rem;
     font-weight: bold;
-    color: #8a5a2b; /* Тот же цвет, что у групп в редакторе */
+    color: #8a5a2b;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     white-space: nowrap;
-    pointer-events: none; /* Клики проходят сквозь текст на сам ареал */
+    pointer-events: none;
     opacity: 0.85;
-
-    /* Белая обводка, чтобы текст читался на пестрой карте */
     text-shadow:
         -1px -1px 0 #fdf6e3,
          1px -1px 0 #fdf6e3,
