@@ -7,29 +7,57 @@ html, body {
     background: #3b2a1a;
 }
 
-/* Шапка и подвал */
-.page-header, .page-footer {
-    position: fixed;
-    left: 0;
-    right: 0;
-    z-index: 999;
-    background: rgba(59, 42, 26, 0.85);
-    color: #f4ecd8;
-    text-align: center;
+/* ==========================================
+   Шапка (плавающая карточка)
+   ========================================== */
+.page-header {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    z-index: 1000;
+    background: rgba(253, 246, 227, 0.95);
+    border: 2px solid #8a5a2b;
+    border-radius: 6px;
+    padding: 10px 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    font-family: Georgia, "Times New Roman", serif;
+    color: #5a1f1f;
 }
-.page-header { top: 0; padding: 10px 24px; }
-.page-footer { bottom: 0; padding: 6px 24px; font-size: 0.75rem; }
+/* ==========================================
+   Кнопки зума (правый верхний угол)
+   ========================================== */
+.leaflet-top.leaflet-right {
+    top: 15px;
+    right: 15px;
+}
 
+.leaflet-control-zoom {
+    border: 2px solid #8a5a2b !important;
+    border-radius: 6px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    overflow: hidden;
+}
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+    background-color: rgba(253, 246, 227, 0.95) !important;
+    color: #5a1f1f !important;
+    font-weight: bold !important;
+    font-family: Georgia, serif !important;
+}
+
+.leaflet-control-zoom-in:hover,
+.leaflet-control-zoom-out:hover {
+    background-color: #fdf6e3 !important;
+    color: #8a5a2b !important;
+}
 .page-header h1 {
-    margin: 0 0 2px;
-    font-size: 1.2rem;
-    letter-spacing: 1px;
-}
-.page-header p {
     margin: 0;
-    font-size: 0.8rem;
-    opacity: 0.8;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
 }
+
+/* Стили .page-footer полностью удалены */
 
 /* Карта на весь экран */
 #map {
@@ -370,4 +398,160 @@ html, body {
         -1px  1px 0 #fdf6e3,
          1px  1px 0 #fdf6e3,
          0 0 4px #fdf6e3;
+}
+
+/* ==========================================
+   Попапы (Контейнер и Меандр)
+   ========================================== */
+.leaflet-popup-content-wrapper {
+    background: #fdf6e3;
+    color: #3b2a1a;
+    border-radius: 6px;
+    border: 2px solid #8a5a2b;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    padding: 0 !important;
+    overflow: hidden;
+}
+.leaflet-popup-content {
+    margin: 0 !important;
+    line-height: inherit;
+}
+
+/* Заголовок (сверху, над меандром) */
+.popup-title-wrapper {
+    padding: 12px 16px;
+    background: #fdf6e3;
+    /* Пунктирную линию убрали */
+}
+.popup-title {
+    margin: 0;
+    font-size: 1.05rem;
+    color: #5a1f1f;
+    font-family: "PT Serif", Georgia, serif;
+}
+
+/* Обертка для контента с меандром */
+.popup-meander-wrapper {
+    position: relative;
+    /* 45px сверху/снизу под меандр, по 20px слева/справа для аккуратного текста */
+    padding: 45px 20px;
+    background: #fdf6e3;
+    box-sizing: border-box;
+}
+
+.popup-content {
+    padding-top: 4px;
+}
+
+/* --- Узоры Меандра (SVG) --- */
+.meander {
+    position: absolute;
+    pointer-events: none;
+    background-image: url('assets/meander.svg');
+    background-repeat: repeat-x;
+    background-size: auto 100%; /* Масштабирует по высоте */
+}
+
+/* Верхняя и нижняя рамки */
+.meander.top,
+.meander.bottom {
+    left: 0;
+    right: 0;
+    height: 45px; /* Увеличили высоту (ширину в контексте полосы) до 45px */
+}
+
+.meander.top { top: 0; }
+.meander.bottom { bottom: 0; }
+
+/* Стили для .meander.left и .meander.right полностью удалены */
+/* ==========================================
+   Текст и Картинки (сохраняем логику раскладки)
+   ========================================== */
+.popup-desc {
+    font-family: "PT Serif", Georgia, "Times New Roman", serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #3b2a1a;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    max-height: 450px;
+    overflow-y: auto;
+    padding-right: 8px;
+    margin: 0;
+}
+
+.highlight {
+    color: #5a1f1f;
+    font-weight: 600;
+}
+
+/* Картинки в попапах */
+.popup-content.has-image {
+    display: flex;
+    gap: 16px;
+    flex-direction: column; /* По умолчанию (горизонтальные) - друг под другом */
+}
+
+.popup-content.has-image.is-vertical {
+    flex-direction: row; /* Вертикальные - рядом */
+    align-items: flex-start;
+}
+
+.popup-text {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.popup-image-wrapper {
+    border: 2px solid #8a5a2b;
+    border-radius: 4px;
+    padding: 4px;
+    background: #fdf6e3;
+    box-sizing: border-box;
+}
+
+.popup-content.is-horizontal .popup-image-wrapper {
+    align-self: center;
+    width: fit-content;
+    max-width: 100%;
+}
+
+.popup-content.is-vertical .popup-image-wrapper {
+    flex-shrink: 0;
+    width: fit-content;
+    max-width: 320px;
+}
+
+.popup-image {
+    display: block;
+    max-width: 100%;
+    max-height: 400px;
+    width: auto;
+    height: auto;
+    border-radius: 2px;
+    object-fit: contain;
+}
+
+
+/* ==========================================
+   Попап, раскрытый ВНИЗ от иконки (хвостик сверху)
+   ========================================== */
+.leaflet-popup.popup-downward {
+    margin-left: 0 !important;
+    transform: translateX(-50%);
+}
+
+.leaflet-popup.popup-downward .leaflet-popup-tip-container {
+    top: -20px !important;
+    bottom: auto !important;
+    left: 50% !important;
+    margin-left: -20px !important;
+    width: 40px !important;
+    height: 20px !important;
+    overflow: hidden;
+}
+
+.leaflet-popup.popup-downward .leaflet-popup-tip {
+    margin: 12px auto 0 !important;
+    transform: rotate(45deg) scaleY(-1);
 }

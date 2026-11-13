@@ -430,13 +430,13 @@
         const visible = c.enabled !== false;
 
         if (ref.zone) zonesLayer.removeLayer(ref.zone);
-        if (ref.label) zonesLayer.removeLayer(ref.label); // Удаляем старую подпись
+        if (ref.label) zonesLayer.removeLayer(ref.label);
         ref.handles.forEach(h => map.removeLayer(h));
         ref.handles = [];
         ref._radiusHandle = null;
 
         let zone = null;
-        let label = null; // Создаем переменную
+        let label = null;
 
         if (c.habitat) {
             const style = window.MythMap.TYPE_STYLES[c.type] || window.MythMap.TYPE_STYLES.constellation;
@@ -448,11 +448,10 @@
             }
 
             if (zone) {
-                const popupHtml = `
-                    <h3 class="popup-title">${c.emoji} ${c.name}</h3>
-                    <p class="popup-desc">${c.desc}</p>
-                `;
-                zone.bindPopup(popupHtml);
+                // ИСПОЛЬЗУЕМ ОБЩУЮ ФУНКЦИЮ ИЗ script.js
+                const popupHtml = window.MythMap.buildPopupHtml(c);
+                zone.bindPopup(popupHtml, { autoPan: false, maxWidth: 800, minWidth: 300 });
+
                 if (visible) zone.addTo(zonesLayer);
             }
 
@@ -462,7 +461,7 @@
         }
 
         ref.zone = zone;
-        ref.label = label; // Сохраняем в ref
+        ref.label = label;
 
         if (editMode && visible && zone && c.habitat) {
             if (c.habitat.type === 'circle') createRadiusHandle(ref);
