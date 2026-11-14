@@ -108,7 +108,7 @@ const CREATURES = [
     {
         id: 'eagle-zeus',
         name: 'Орёл Зевса',
-        coords: [446.5, 521.8],
+        coords: [450, 521.8],
         emoji: '🦅',
         type: 'minor',
         desc: DESCRIPTIONS['eagle-zeus'],
