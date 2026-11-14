@@ -9,7 +9,7 @@ const CONFIG = {
     imageUrl: 'assets/map.svg',
     imageBounds: [[0, 0], [696, 1264]],
     imageOpacity: 0.95,
-    debugCoords: true,
+    debugCoords: false,
 };
 
 const GEO_BOUNDS = {

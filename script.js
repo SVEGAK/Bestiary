@@ -26,8 +26,6 @@ L.imageOverlay(CONFIG.imageUrl, CONFIG.imageBounds, {
     opacity: CONFIG.imageOpacity,
     interactive: false,
     className: 'map-overlay',
-    errorOverlayUrl:
-        'https://placehold.co/800x500/d9cfb8/3b2a1a?text=assets/map.svg+not+found',
 }).addTo(map);
 
 // ==========================================================
@@ -322,6 +320,12 @@ map.on('popupclose', function () {
     clearAnimationQueue();
 });
 
+const popupOptions = {
+    autoPan: false,
+    maxWidth: window.innerWidth < 768 ? 340 : 800, // 340px для телефонов
+    minWidth: 280
+};
+// И используйте popupOptions внутри bindPopup(...)
 // ==========================================================
 // РЕНДЕР СУЩЕСТВ
 // ==========================================================
